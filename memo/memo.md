@@ -403,10 +403,31 @@ fi
 
 ![](スクリーンショット%202023-03-17%20133257.png)
 - 開発者がローカル環境でイメージをビルドし，それをDockerHubのようなDockerレジストリにプッシュする
+  - `docker-compose build( ${service name})`
+  - `docker-compose push( ${service name})`
 - そして，本番サーバは新しく作成されたイメージをプルし，コンテナを再作成する
+  - `docker-compose pull( ${service name})`
+  - `docker-compose up( --no-deps ${service name})`
 - つまり，ソースコードを本番環境に受け渡すのではなく，ビルド済みのイメージを受け渡すイメージ
 
 ![](スクリーンショット%202023-03-17%20134909.png)
+### 自動化
+- docker watchtower
+  - DockerHub上のアプリケーションで使用しているイメージの変更を監視し，変更があれば自動でプルする
+    - このツール自体もコンテナとして作成されている
+### オーケストレーション
+- ここまでのフローでは，変更の度にコンテナを再作成する必要があった
+  - つまり，それまでのトラフィックは再作成の度に削除されてしまっていた
+    - ローリングアップデートができない
+      - この手法では、新しいバージョンのアプリケーションを徐々に展開し、徐々に古いバージョンのアプリケーションを置き換えます
+  - Composeファイルはただ単にコマンドを複数打つ必要をなくすための設定ファイルであり，オーケストレーターではない
+    - 一つのサーバー上でしか実行できない
+      - 複数のサーバーで実行して，サービスダウンに対する冗長性を持たせたりすることはできない
+- そこで．オーケストレーションツールが必要
+- Docker Swarm
+  - Dockerインストール時点でDocker Swarmも用意されている
+    - ただデフォルトでは使用できないようになっているため，設定変更が必要
+  - `docker swarm init`でSwarmを利用可能にし，Composeファイル内に設定を書いていくことで利用できる
 
 ---
 
@@ -559,3 +580,22 @@ fi
 - redisDB内の全てのエントリを表示する
 ## `get ${key}`
 - 指定したエントリ（キー）の詳細を表示する
+## `docker push ${image name}`
+- Dockerレジストリにイメージをプッシュする
+  - 注意
+    - まずは`docker login`をする必要がある
+    - ***イメージ名はDockerHub内で一意でなければならない***ため，一般的には`${registry name}/${image name}`とする
+## `docker image tag ${image name} ${another image name}`
+- イメージに別名（タグ）を付ける
+## `docker-compose build`
+- Composeファイルにあるサービスに対してイメージをビルドするが，コンテナは起動しない
+  - 新しいイメージをビルドする場合に便利
+    - いちいちDockerfileから一つずつイメージをビルドする必要がないから
+- `docker-compose build ${service name}`
+  - 特定のサービスのイメージのみをビルドする
+## `docker-compose push`
+- Composeファイルにあるサービスに対してイメージをDockerレジストリにプッシュする
+-  `docker-compose push ${service name}`
+  - 特定のサービスのイメージのみをプッシュする
+## `docker-compose pull`
+- Composeファイルに定義された各サービスに対して、そのサービスが使用するDockerイメージを取得します。
