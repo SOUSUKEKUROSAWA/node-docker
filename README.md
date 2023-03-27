@@ -28,8 +28,8 @@
 - 単に`EXPOSE 3000`とするだけでは，`localhost:3000`にはアクセスできない
   - セキュリティ上，デフォルトではコンテナから外部にはアクセスできるが，外部（windowsなど，localhostのこと）からコンテナにはアクセスできない
   - `docker run`時にポートマッピングを行う必要がある
-    - ![](スクリーンショット%202023-03-09%20215139.png)
-    - ![](スクリーンショット%202023-03-09%20215340.png)
+    - ![](https://storage.googleapis.com/zenn-user-upload/25e8f39c9861-20230327.png)
+    - ![](https://storage.googleapis.com/zenn-user-upload/1e85a5942f67-20230327.png)
     - これにより，外部（もしくはlocalhost）からポート3000に来たトラフィックは全てコンテナのポート3000へと送られる
 # dockerignoreファイル
 ## `COPY . .`の問題点と対処法
@@ -344,7 +344,7 @@ fi
     - これにより，スケールアップの必要が発生しても複数のポートを開く必要はなくなり，nginxによる単一のポートからアクセスが可能になる
       - nginxのデフォルトポート番号は80
 
-![](スクリーンショット%202023-03-16%20164902.png)
+![](https://storage.googleapis.com/zenn-user-upload/17c8a18ee3f0-20230327.png)
 # nginx
 - 高性能かつ軽量なWebサーバー/リバースプロキシ
   - 今回は主にロードバランシングを実装するために利用する
@@ -401,7 +401,7 @@ fi
     - ***本番用サーバは本番用トラフィックを処理するためだけにあるべき***
 - そこで，本番サーバーではないマシンでイメージを構築できるようなワークフローに移行することが必要
 
-![](スクリーンショット%202023-03-17%20133257.png)
+![](https://storage.googleapis.com/zenn-user-upload/644f3c849e7c-20230327.png)
 - 開発者がローカル環境でイメージをビルドし，それをDockerHubのようなDockerレジストリにプッシュする
   - `docker-compose build( ${service name})`
   - `docker-compose push( ${service name})`
@@ -410,7 +410,7 @@ fi
   - `docker-compose up( --no-deps ${service name})`
 - つまり，ソースコードを本番環境に受け渡すのではなく，ビルド済みのイメージを受け渡すイメージ
 
-![](スクリーンショット%202023-03-17%20134909.png)
+![](https://storage.googleapis.com/zenn-user-upload/0aeee89fe08e-20230327.png)
 ### 自動化
 - docker watchtower
   - DockerHub上のアプリケーションで使用しているイメージの変更を監視し，変更があれば自動でプルする
